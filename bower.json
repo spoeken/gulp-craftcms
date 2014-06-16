@@ -1,0 +1,12 @@
+{
+  "name": "craftgulp",
+  "version": "0.0.0",
+  "authors": [
+    "Mathias Stav <mathias@feed.no>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "normalize-css": "~3.0.1"
+  }
+}

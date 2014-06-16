@@ -1,5 +1,5 @@
 .DS_Store
-app/bower_components
+app/resources/bower_components
 craft
 craft/storage/runtime/*
 node_modules
