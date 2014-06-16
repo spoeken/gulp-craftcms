@@ -1,6 +1,5 @@
 .DS_Store
 app/resources/bower_components
-craft
 craft/storage/runtime/*
 node_modules
 *.sass-cache
