@@ -9,6 +9,9 @@ var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
 var usemin = require('gulp-usemin');
 var clean = require('gulp-clean');
+var jshint = require('gulp-jshint');
+var cache = require('gulp-cache');
+var imagemin = require('gulp-imagemin');
 
 
 //Watch
@@ -34,6 +37,7 @@ gulp.task('watch', ['server'], function() {
 	});
 
 	gulp.watch('app/resources/js/**').on('change', function(file){
+		gulp.run('jshint');
 	});
 
 });
@@ -47,9 +51,24 @@ gulp.task('compass', function(){
 				})).on('error', function(err) {
 						//console.log(err);
 				})
-				.pipe( prefix("last 2 version", "ie 8") )
+				.pipe( prefix("last 1 version", "ie 8") )
 		.pipe( gulp.dest('./app/resources/css')
 	);
+});
+
+gulp.task('jshint', function () {
+  return gulp.src('./app/resources/js/**/*.js')
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('images', function () {
+  return gulp.src('./app/resources/images/**/*')
+    .pipe(cache(imagemin({
+      progressive: true,
+      interlaced: true
+    })))
+    .pipe(gulp.dest('public/resources/images'));
 });
 
 //Build
@@ -65,7 +84,7 @@ gulp.task('usemin', function() {
 		
 });
 
-gulp.task('build', ['usemin'], function(){
+gulp.task('build', ['usemin', 'images'], function(){
 
 	//Move
 	gulp.src(['craft/templates/resources/**'])
