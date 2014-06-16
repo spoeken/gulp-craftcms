@@ -1,17 +1,18 @@
-var gulp = require('gulp');
-var sass = require('gulp-sass');
-var compass = require('gulp-compass');
-var watch = require('gulp-watch');
-var livereload = require('gulp-livereload');
-var prefix = require('gulp-autoprefixer');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var gutil = require('gulp-util');
-var usemin = require('gulp-usemin');
-var clean = require('gulp-clean');
-var jshint = require('gulp-jshint');
-var cache = require('gulp-cache');
-var imagemin = require('gulp-imagemin');
+var	gulp = require('gulp'),
+	sass = require('gulp-sass'),
+	compass = require('gulp-compass'),
+	watch = require('gulp-watch'),
+	livereload = require('gulp-livereload'),
+	prefix = require('gulp-autoprefixer'),
+	concat = require('gulp-concat'),
+	uglify = require('gulp-uglify'),
+	gutil = require('gulp-util'),
+	usemin = require('gulp-usemin'),
+	clean = require('gulp-clean'),
+	jshint = require('gulp-jshint'),
+	cache = require('gulp-cache'),
+	imagemin = require('gulp-imagemin'),
+	wiredep = require('wiredep').stream;
 
 
 //Watch
@@ -45,13 +46,13 @@ gulp.task('watch', ['server'], function() {
 gulp.task('compass', function(){
 	gulp.src( ['./app/resources/sass/*.scss'], {base: './app/resources/sass/'} )
 		.pipe(compass({
-						config_file: './config.rb',
-						css: './app/resources/css',
-						sass: './app/resources/sass',
-				})).on('error', function(err) {
-						//console.log(err);
-				})
-				.pipe( prefix("last 1 version", "ie 8") )
+				config_file: './config.rb',
+				css: './app/resources/css',
+				sass: './app/resources/sass',
+		})).on('error', function(err) {
+				//console.log(err);
+		})
+		.pipe( prefix("last 1 version") )
 		.pipe( gulp.dest('./app/resources/css')
 	);
 });
@@ -95,6 +96,14 @@ gulp.task('build', ['usemin', 'images'], function(){
 	gulp.src(['craft/templates/resources/**', 'craft/templates/resources/'], {read:false})
 	.pipe(clean());
 
+});
+
+gulp.task('bower', function () {
+  gulp.src('./app/templates/_layout.html')
+    .pipe(wiredep({
+
+    }))
+    .pipe(gulp.dest('./app/templates/'));
 });
 
 gulp.task('default', ['build']);
