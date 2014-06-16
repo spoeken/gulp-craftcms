@@ -17,12 +17,10 @@ var	gulp = require('gulp'),
 
 //Watch
 
-var watchDir = 'app';
-
 gulp.task('server', function(next) {
 	var connect = require('connect'),
 			server = connect();
-	server.use(connect.static(watchDir)).listen(process.env.PORT || 3000, next);
+	server.use(connect.static('app')).listen(process.env.PORT || 3000, next);
 });
 
 gulp.task('watch', ['server'], function() {
