@@ -38,6 +38,10 @@ gulp.task('watch', ['server'], function() {
 		gulp.run('jshint');
 	});
 
+	gulp.watch('app/resources/bower_components/**').on('change', function(file){
+		gulp.run('bower');
+	});
+
 });
 
 gulp.task('compass', function(){
