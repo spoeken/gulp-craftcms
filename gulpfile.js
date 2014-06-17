@@ -1,5 +1,4 @@
 var	gulp = require('gulp'),
-	sass = require('gulp-sass'),
 	compass = require('gulp-compass'),
 	watch = require('gulp-watch'),
 	livereload = require('gulp-livereload'),
