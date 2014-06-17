@@ -1,4 +1,4 @@
-Magical workflow for Craft with Gulp
+Workflow for Craft with Gulp
 -
 Requires [Nodejs](http://nodejs.org/) and [Gulp](http://gulpjs.com/)
 
