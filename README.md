@@ -27,9 +27,6 @@ Set ```/app``` as server root on development and ```/public``` for production.
 Gulp Plugins
 -
 
-* **sass** -
-_Compiles scss files to css_
-
 
 * **compass** -
 _Css compiler_
