@@ -7,7 +7,8 @@ var	gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
 	gutil = require('gulp-util'),
 	usemin = require('gulp-usemin'),
-	clean = require('gulp-clean'),
+	// clean = require('gulp-clean'),
+	del = require('del'),
 	jshint = require('gulp-jshint'),
 	cache = require('gulp-cache'),
 	imagemin = require('gulp-imagemin'),
@@ -25,7 +26,7 @@ gulp.task('server', function(next) {
 gulp.task('watch', ['server'], function() {
 
 	var server = livereload();
-	
+
 	gulp.watch('app/resources/css/**').on('change', function(file) {
 		server.changed(file.path);
 	});
@@ -64,13 +65,20 @@ gulp.task('jshint', function () {
     .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('images', function () {
-  return gulp.src('./app/resources/images/**/*')
-    .pipe(cache(imagemin({
+gulp.task('images', ['move'], function () {
+  return gulp.src('./app/resources/img/**/*')
+    .pipe(imagemin({
       progressive: true,
       interlaced: true
-    })))
-    .pipe(gulp.dest('public/resources/images'));
+    }))
+    .pipe(gulp.dest('./public/resources/img'));
+
+});
+
+gulp.task('fonts', ['move'], function () {
+  return gulp.src('./app/resources/fonts/**/*')
+    .pipe(gulp.dest('./public/resources/fonts'));
+
 });
 
 //Build
@@ -83,21 +91,31 @@ gulp.task('usemin', function() {
 		bower: [uglify()]
 	}))
 	.pipe(gulp.dest('./craft/templates'));
-		
+
 });
 
-gulp.task('build', ['usemin', 'images'], function(){
 
+gulp.task('clean:before', function(cb) {
+    del(['public/resources/**'], cb);
+});
+
+gulp.task('clean:after', ['usemin', 'images', 'fonts'], function(cb) {
+    del(['craft/templates/resources/**', 'craft/templates/resources/'], cb);
+});
+
+gulp.task('move', ['usemin', 'clean:before'], function(){
 	//Move
-	gulp.src(['craft/templates/resources/**'])
+	return gulp.src(['craft/templates/resources/**'])
 	.pipe(gulp.dest('public/resources/'));
+});
 
-	//Clean
 
-	gulp.src(['craft/templates/resources/**', 'craft/templates/resources/'], {read:false})
-	.pipe(clean());
+gulp.task('build', ['clean:after'], function(){
+
 
 });
+
+
 
 gulp.task('bower', function () {
   gulp.src('./app/templates/_layout.html')
