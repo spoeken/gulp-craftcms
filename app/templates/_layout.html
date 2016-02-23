@@ -15,20 +15,15 @@
 	<meta charset="utf-8" />
 	<title>{% if title is defined %}{{ title }} - {% endif %}{{ siteName }}</title>
 	<link rel="home" href="{{ siteUrl }}" />
-	
-	<!-- build:css styles/vendor.css -->
-	<!-- bower:css -->
-	<link rel="stylesheet" href="../resources/bower_components/normalize-css/normalize.css" />
-	<!-- endbower -->
+
+	<!-- build:css(app) styles/vendor.css -->
+
 	<!-- endbuild -->
 
-	<!-- build:css /resources/css/style.css -->
-	    <link rel="stylesheet" href="../resources/css/main.css">
+	<!-- build:css(app) /resources/css/style.css -->
+	    <link rel="stylesheet" href="/resources/css/main.css">
 	<!-- endbuild -->
-	
-	<!-- build:js /resources/js/vendor/modernizr.js -->
-	    <script src="../resources/bower_components/modernizr/modernizr.js"></script>
-    <!-- endbuild -->
+
 </head>
 
 <body>
@@ -55,15 +50,12 @@
 		</footer>
 	</div>
 
-	
-	<!-- build:bower /resources/js/vendor.js -->
-	    <!-- bower:js -->
-	    <script src="../resources/bower_components/jquery/dist/jquery.js"></script>
-	    <!-- endbower -->
+	<!-- build:bower(app) /resources/js/vendor.js -->
+	    <script src="/resources/bower_components/jquery/dist/jquery.js"></script>
 	<!-- endbuild -->
 
-	<!-- build:js /resources/js/app.min.js -->
-	    <script src="../resources/js/app.js"></script>
+	<!-- build:js(app) /resources/js/app.min.js -->
+	    <script src="/resources/js/app.js"></script>
 	<!-- endbuild -->
 
 </body>

@@ -7,7 +7,6 @@ var	gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
 	gutil = require('gulp-util'),
 	usemin = require('gulp-usemin'),
-	// clean = require('gulp-clean'),
 	del = require('del'),
 	jshint = require('gulp-jshint'),
 	cache = require('gulp-cache'),
@@ -19,16 +18,18 @@ var	gulp = require('gulp'),
 
 gulp.task('server', function(next) {
 	var connect = require('connect'),
-			server = connect();
-	server.use(connect.static('app')).listen(process.env.PORT || 3000, next);
+	serveStatic = require('serve-static');
+	app = connect();
+	app.use(serveStatic('app', {}));
+	app.listen(process.env.PORT || 3000, next);
 });
 
 gulp.task('watch', ['server'], function() {
 
-	var server = livereload();
+	livereload({ start: true });
 
 	gulp.watch('app/resources/css/**').on('change', function(file) {
-		server.changed(file.path);
+		livereload.changed(file.path);
 	});
 
 	gulp.watch('app/resources/sass/**').on('change', function(file){
@@ -54,81 +55,92 @@ gulp.task('compass', function(){
 		})).on('error', function(err) {
 				//console.log(err);
 		})
-		.pipe( prefix("last 1 version") )
+		.pipe( prefix("last 3 version") )
 		.pipe( gulp.dest('./app/resources/css')
 	);
 });
 
 gulp.task('jshint', function () {
-  return gulp.src('./app/resources/js/**/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+	return gulp.src(['./app/resources/js/**/*.js', '!./app/resources/js/vendor/**/*.js'])
+	.pipe(jshint())
+	.pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('images', ['move'], function () {
-  return gulp.src('./app/resources/img/**/*')
-    .pipe(imagemin({
-      progressive: true,
-      interlaced: true
-    }))
-    .pipe(gulp.dest('./public/resources/img'));
+	return gulp.src('./app/resources/images/**/*')
+	.pipe(cache(imagemin({
+		progressive: true,
+		interlaced: true
+	})))
+	.pipe(gulp.dest('./public/resources/images'));
 
 });
 
 gulp.task('fonts', ['move'], function () {
-  return gulp.src('./app/resources/fonts/**/*')
-    .pipe(gulp.dest('./public/resources/fonts'));
+	return gulp.src('./app/resources/fonts/**/*')
+	.pipe(gulp.dest('./public/resources/fonts'));
+});
+
+gulp.task('json', ['move'], function () {
+	return gulp.src('./app/resources/json/**/*')
+	.pipe(gulp.dest('./public/resources/json'));
 
 });
 
 //Build
 
-gulp.task('usemin', function() {
+gulp.task('usemin', ['templates'], function() {
 
-	return gulp.src('app/templates/**')
+	return gulp.src('./app/templates/_layout.html')
 	.pipe(usemin({
-		js: [uglify()],
-		bower: [uglify()]
+		// js: [uglify()],
+		// bower: [uglify()]
 	}))
-	.pipe(gulp.dest('./craft/templates'));
+	.pipe(gulp.dest('./craft/templates/'));
+
+});
+
+gulp.task('compress', ['json'], function() {
+  return gulp.src('public/resources/js/**/*.js')
+    .pipe(uglify())
+    .pipe(gulp.dest('public/resources/js/'));
+});
+
+// Moving templates, why does usemin fuck this up?
+
+gulp.task('templates', function(){
+
+	return gulp.src(['./app/templates/**'])
+	.pipe(gulp.dest('./craft/templates/'));
 
 });
 
 
-gulp.task('clean:before', function(cb) {
-    del(['public/resources/**'], cb);
+
+
+gulp.task('clean:after', ['images', 'fonts', 'json', 'compress'], function(cb) {
+	del(['craft/templates/resources/*/**', 'craft/templates/resources/', 'craft/templates/styles/'], cb);
 });
 
-gulp.task('clean:after', ['usemin', 'images', 'fonts'], function(cb) {
-    del(['craft/templates/resources/**', 'craft/templates/resources/'], cb);
-});
-
-gulp.task('move', ['usemin', 'clean:before'], function(){
+gulp.task('move', ['usemin'], function(){
+	//Delete old resources
+	del(['public/resources/**']);
 	//Move
 	return gulp.src(['craft/templates/resources/**'])
 	.pipe(gulp.dest('public/resources/'));
 });
-
 
 gulp.task('build', ['clean:after'], function(){
 
 
 });
 
-
-
 gulp.task('bower', function () {
-  gulp.src('./app/templates/_layout.html')
-    .pipe(wiredep({
+	gulp.src('./app/templates/_layout.html')
+	.pipe(wiredep({
 
-    }))
-    .pipe(gulp.dest('./app/templates/'));
+	}))
+	.pipe(gulp.dest('./app/templates/'));
 });
 
 gulp.task('default', ['build']);
-
-
-
-
-
-
